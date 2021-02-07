@@ -2,7 +2,7 @@
 # Итоговое задание блока B5 - игра "Крестики-нолики"
 import os
 from random import randint
-import algorithm as al
+# import algorithm as al
 
 # declare section
 # Словарь настроек и динамических данных игровой сессии
@@ -17,6 +17,7 @@ config = {
     "cell_nums": list(range(10)),  # Набор допустимых номеров клеток:
                                    # 1-9 сами номера ячеек
                                    # 0 используется для выхода из игры
+#    "prefix"
     # -------------------------------
     # Параметры игровой сессии
     "player_step_type": None,  # чем играет человек - индекс в config["step_type"]
@@ -45,14 +46,29 @@ def check_cell(cell_number):
 
 # Выводит игровое поле
 def print_board():
-    clear()
-    print("-------- Табло --------")
+    print('\033[2J')  # clear()
+    print("")
+    print("\u001b[0m-------- Табло --------\u001b[38;5;4m")
     print(*print_data, sep="\n")
-    print("-------- Табло --------")
+    print("\u001b[0m-------- Табло --------\u001b[0m")
 
     for i in range(1, len(board) + 1):
         for j in range(1, len(board) + 1):
-            print("["+str(board[i - 1][j - 1]) + "]", end="")
+            s = "\u001b[38;5;<brd_c>m(\u001b[38;5;<step_c>m<step_type>\u001b[38;5;<brd_c>m)\u001b[0m"
+            s2 = str(board[i - 1][j - 1])
+            # Зададим саму фишку
+            s = s.replace("<step_type>", s2)
+            # Зададим цвет фишки
+            if s2 == "X":
+                s = s.replace("<step_c>", "14")  # Яркий светло-голубой
+            elif s2 == "0":
+                s = s.replace("<step_c>", "11")  # Ярко-жёлтый
+            else:
+                s = s.replace("<step_c>", "7")  # Серый
+
+            # Зададим цвет границ
+            s = s.replace("<brd_c>", "8")  # Тускло-серый
+            print(s, end="")
         print("")
 
 
@@ -235,17 +251,20 @@ def do_step():
 def session_state():
     x = analyze_board()
     if x == config["session_state"][0]:  # есть ход
-        print("Партия незавершена")
+        s = "Партия незавершена"
     elif x == config["session_state"][1]:  # выиграли крестики
-        print("Выиграли крестики! :)))")
+        s = "Выиграли крестики! :)))"
     elif x == config["session_state"][2]:  # выиграли нолики
-        print("Выиграли нолики! :(((")
+        s = "Выиграли нолики! :((("
     elif x == config["session_state"][3]:  # ничья
-        print("Ничья! :|||")
+        s = "Ничья! :|||"
+    print("\u001b[38;5;9m" + s + "\u001b[0m")
 
 
 # тело программы
 board = init_board()
+# print_board()
+# exit()
 # запрос конфигурации
 ask_step_type()
 ask_human_first_step()
