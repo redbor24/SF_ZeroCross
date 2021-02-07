@@ -250,12 +250,21 @@ def do_step():
 # Вывод состяния партии
 def session_state():
     x = analyze_board()
-    if x == config["session_state"][0]:  # есть ход
-        s = "Партия незавершена"
-    elif x == config["session_state"][1]:  # выиграли крестики
-        s = "Выиграли крестики! :)))"
+
+    # if x == config["session_state"][0]:  # есть ход
+    #     s = "Партия незавершена"
+    #     return
+
+    if x == config["session_state"][1]:  # выиграли крестики
+        if config["player_step_type"] == 0:
+            s = "Вы выиграли! :)))"
+        else:
+            s = "Вы проиграли! :((("
     elif x == config["session_state"][2]:  # выиграли нолики
-        s = "Выиграли нолики! :((("
+        if config["player_step_type"] == 1:
+            s = "Вы выиграли! :)))"
+        else:
+            s = "Вы проиграли! :((("
     elif x == config["session_state"][3]:  # ничья
         s = "Ничья! :|||"
     print("\u001b[38;5;9m" + s + "\u001b[0m")
